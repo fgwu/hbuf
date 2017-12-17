@@ -11,6 +11,13 @@
 
 using namespace std;
 
+#define ZONE_SIZE (256 * 1024 * 1024) // 256MB
+#define BLK_SIZE (4 * 1024) // 4KB
+//typedef unsigned long smr_off_t;
+//typedef unsigned int smr_size_t;
+//typedef unsigned int smr_zone_t;
+
+
 long opt(vector<long>& hist, int bhuf_num);
 
 int main(int argc, char** argv) {
@@ -44,7 +51,7 @@ int main(int argc, char** argv) {
 	long offset = stol(val);
 
 	getline(ss, val, ',');
-	int size = stoi(val);
+	long size = stoi(val);
 
 	getline(ss, val, ',');
 	long responsetime = stol(val);
@@ -54,7 +61,10 @@ int main(int argc, char** argv) {
 	// if (cnt_map.count(offset)) 
 	//     cout << offset << " appeared " << cnt_map[offset] << "\n";
 
-	cnt_map[offset]++;
+	int zone_id = offset / ZONE_SIZE;
+	// truncate away from zero
+	int num_blocks = (size + BLK_SIZE - 1) / BLK_SIZE; 
+	cnt_map[zone_id]++;
     }
 
     cout << "pushing to vector\n";
@@ -74,6 +84,7 @@ int main(int argc, char** argv) {
     }
 
     cout << "tail:" << cnt << "\n";
+    cout << "Zone Covered:" << cnt_map.size() << "\n";
 
     cout << opt(hist, 100) << "\n";
     

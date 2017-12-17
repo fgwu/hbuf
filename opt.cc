@@ -12,7 +12,7 @@
 
 using namespace std;
 
-long opt(vector<long>& hist, long hbuf_num) {
+long opt(vector<long>& hist, int hbuf_num) {
     if (!hbuf_num) return -1;
     if (!hist.size()) return 0;
     
