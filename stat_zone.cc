@@ -13,6 +13,7 @@ using namespace std;
 
 #define ZONE_SIZE (256 * 1024 * 1024) // 256MB
 #define BLK_SIZE (4 * 1024) // 4KB
+#define GIG (1024 * 1024 * 1024)
 //typedef unsigned long smr_off_t;
 //typedef unsigned int smr_size_t;
 //typedef unsigned int smr_zone_t;
@@ -30,6 +31,7 @@ int main(int argc, char** argv) {
     string tmp;
 
     int lines = 0;
+    long total_data = 0;
     while(getline(f, tmp)) {
 	if (++lines % 1000000 == 0)
 	    cout << lines / 1000000 << " million lines\n";
@@ -63,8 +65,9 @@ int main(int argc, char** argv) {
 
 	int zone_id = offset / ZONE_SIZE;
 	// truncate away from zero
-	int num_blocks = (size + BLK_SIZE - 1) / BLK_SIZE; 
-	cnt_map[zone_id]++;
+	// 	int num_blocks = (size + BLK_SIZE - 1) / BLK_SIZE; 
+	cnt_map[zone_id] += size;
+	total_data += size;
     }
 
     cout << "pushing to vector\n";
@@ -86,7 +89,10 @@ int main(int argc, char** argv) {
     cout << "tail:" << cnt << "\n";
     cout << "Zone Covered:" << cnt_map.size() << "\n";
 
-    cout << opt(hist, 100) << "\n";
+    long clean_data = opt(hist, 100);
+    printf("    total data: %10.3f\n", total_data * 1.0 / GIG);
+    printf("    clean data: %10.3f\n", clean_data * 1.0 / GIG);
+    printf("clean overhead: %10.3f\n", clean_data * 1.0 / total_data);
     
     return 0;
 }
