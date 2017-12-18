@@ -1,10 +1,17 @@
-all: stat stat_zone
+CXX = g++
+CXXFLAGS = -Wall -g -std=c++11
+OBJ = disk.o main.o \
+	stats.o tracereader.o policy.o
+PROG = sim
 
-stat: stat.cc opt_alloc.cc
-	g++ -std=c++11 -g stat.cc  opt_alloc.cc  -o stat
+$(PROG): $(OBJ)
+	g++ -o $(PROG) $(OBJ)
 
-stat_zone: stat_zone.cc opt_alloc.cc rand_alloc.cc
-	g++ -std=c++11 -g stat_zone.cc  opt_alloc.cc rand_alloc.cc -o stat_zone
+$(OBJ): global.h policy.h
 
+tracereader.o: disk.h
+
+
+.PHONY: clean
 clean:
-	rm stat stat_zone
+	-rm $(PROG) $(OBJ)
