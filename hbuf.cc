@@ -9,8 +9,9 @@
 
 using namespace std;
 
-HBuf::HBuf () {
+HBuf::HBuf (Policy* p) {
     disk = new FakeDisk();
+    policy = p;
     hbuf_num = HBUF_NUM;
     uzone_num = disk->getZoneTotalNum() - hbuf_num;
     hbuf_map.resize(hbuf_num);
@@ -24,11 +25,11 @@ HBuf::~HBuf () {
 
 void HBuf::cleanHBuf(zone_t buf) {
     assert(buf < hbuf_num);
-    // printf("\ncleaning hbuf %u wp(%lx) size(%lu):", buf,
-    // 	   disk->getWritePointer(buf), hbuf_map[buf].size());
-    // for (zone_t z: hbuf_map[buf])
-    // 	printf("%u ", z);
-    // printf("\n");
+    printf("\ncleaning hbuf %u wp(%lx) size(%lu):", buf,
+    	   disk->getWritePointer(buf), hbuf_map[buf].size());
+    for (zone_t z: hbuf_map[buf])
+    	printf("%u ", z);
+    printf("\n");
     Stats::getStats()->countZoneClean(hbuf_map[buf].size());
     hbuf_map[buf].clear();
     disk->resetWritePointer(buf);
@@ -50,8 +51,7 @@ loff_t HBuf::writeToHBuf(ioreq req, zone_t buf){
 
 // return value: the resultant logic offset. 
 void HBuf::write(ioreq req){
-    Policy p = Policy::GetPolicy();
-    writeToHBuf(req, p.PickHBuf(req));
+    writeToHBuf(req, policy->PickHBuf(req));
     Stats::getStats()->countBytesWritten(req.len);
     // TODO insert poff mapping
     //    loff_t poff = writeToHBuf(req, p.PickHBuf(req));

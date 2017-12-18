@@ -4,6 +4,9 @@
 #include "stats.h"
 #include "tracereader.h"
 #include "hbuf.h"
+#include "policy_setasso.h"
+#include "policy_rand.h"
+#include "policy_hash.h"
 
 using namespace std;
 
@@ -13,7 +16,10 @@ int main(int argc, char** argv){
 	return -1;
     }
     
-    HBuf hbufdisk;
+    //Policy * p = new Policy_SetAsso();
+    Policy * p = new Policy_Hash();
+    //Policy * p = new Policy_Rand();
+    HBuf hbufdisk(p);
     TraceReader tr(argv[1]);
     ioreq req;
     int lines = 0;
@@ -29,5 +35,6 @@ int main(int argc, char** argv){
 	    hbufdisk.read(req);
     }
     Stats::getStats()->report();
+    delete p;
     return 0;
 }

@@ -4,11 +4,9 @@
 #include "disk.h"
 
 class Policy {
- private:
-    static Policy policy;
  public:
-    static Policy GetPolicy();
-    zone_t PickHBuf(ioreq);
+    virtual ~Policy() {};
+    virtual zone_t PickHBuf(ioreq) = 0;
 };
 
 #endif

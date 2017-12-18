@@ -5,6 +5,7 @@
 #include <unordered_set>
 #include "fakedisk.h"
 #include "stats.h"
+#include "policy.h"
 
 using namespace std;
 
@@ -15,12 +16,13 @@ private:
     zone_t hbuf_num;
     zone_t uzone_num;
     Disk *disk;
+    Policy *policy;
     // bhuf id => data's home zone collection.
     vector<unordered_set<zone_t>> hbuf_map; 
     void cleanHBuf(zone_t buf);
     loff_t writeToHBuf(ioreq req, zone_t zone);
  public:
-    HBuf();
+    HBuf(Policy* p);
     ~HBuf();
     void write(ioreq req);
     void read(ioreq req);

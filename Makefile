@@ -1,7 +1,8 @@
 CXX = g++
 CXXFLAGS = -Wall -g -std=c++11 -Wextra -pedantic
 OBJ =  main.o \
-	stats.o tracereader.o policy.o fakedisk.o hbuf.o
+	stats.o tracereader.o fakedisk.o hbuf.o \
+	policy_setasso.o policy_rand.o policy_hash.o
 PROG = sim
 
 $(PROG): $(OBJ)
