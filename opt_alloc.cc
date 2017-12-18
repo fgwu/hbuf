@@ -12,7 +12,7 @@
 
 using namespace std;
 
-long opt(vector<long>& hist, int hbuf_num) {
+long opt_alloc(vector<long>& hist, int hbuf_num) {
     if (!hbuf_num) return -1;
     if (!hist.size()) return 0;
     
@@ -20,7 +20,7 @@ long opt(vector<long>& hist, int hbuf_num) {
     // cost[i,j] stores the bhuf cost if it contains
     // all hists between i to j.
     vector<vector<long>> cost(n, vector<long>(n, 0)); 
-
+    
     for (long i = 0; i < n; i++)
 	for (long j = i; j < n; j++) {
 	    long last_len = j - i;
@@ -29,13 +29,12 @@ long opt(vector<long>& hist, int hbuf_num) {
 	}
 
     // for (auto & v: cost) {
-    // 	for (auto c: v) printf("%5ld", c);
+    // 	for (auto c: v) printf("%15ld", c);
     // 	cout << "\n";
     // }
     // cout << "\n";
     
     // hbuf_num is enough to hold single LBA per hbuf
-    if (hbuf_num >= hist.size()) return cost[0][n - 1];
     
     // dp[i][j] stores the min cost of hbuf_num < i (ie i - 1), hist[0~j]
     vector<vector<long>> dp(hbuf_num, vector<long>(n, 0));
@@ -59,25 +58,14 @@ long opt(vector<long>& hist, int hbuf_num) {
 	    }
 	    cut[i][j] = cand;
 	}
-    cout << "\n";    
 
-    // for (auto & v: dp) {
-    // 	for (auto c: v) printf("%5ld", c);
-    // 	cout << "\n";
-    // }
-    // cout << "\n";
+    // long i = min((long)hbuf_num, n) - 1, j = n - 1;
+    // for (; i >= 0; j = cut[i][j] - 1, i--) 
+    // 	printf("i=%ld [%ld %ld] cost=%ld\n", i, cut[i][j], j,
+    // 	       dp[cut[i][j]][j]);
 
-    for (long i = hbuf_num - 1, j = n - 1; i >= 0; j = cut[i][j] - 1, i--) 
-	printf("i=%ld [%ld %ld] cost=%ld\n", i, cut[i][j], j,
-	       cost[cut[i][j]][j]);
-
-    cout << "\n";
-
-    return dp[hbuf_num - 1][n - 1];
+    // if n < hbuf_num, we can store one zone per buffer. Just sum them up
+    return dp[min(n, (long)hbuf_num) - 1][n - 1];
 }
 
-// int main(){
-//     vector<long> hist = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-//     cout << opt(hist, 3) << "\n";
-//     return 0;
-// }
+

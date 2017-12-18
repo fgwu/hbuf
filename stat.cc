@@ -11,7 +11,7 @@
 
 using namespace std;
 
-long opt(vector<long>& hist, int bhuf_num);
+long opt_alloc(vector<long>& hist, int bhuf_num);
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
 
     cout << "tail:" << cnt << "\n";
 
-    cout << opt(hist, 100) << "\n";
+    cout << opt_alloc(hist, 100) << "\n";
     
     return 0;
 }

@@ -14,12 +14,9 @@ using namespace std;
 #define ZONE_SIZE (256 * 1024 * 1024) // 256MB
 #define BLK_SIZE (4 * 1024) // 4KB
 #define GIG (1024 * 1024 * 1024)
-//typedef unsigned long smr_off_t;
-//typedef unsigned int smr_size_t;
-//typedef unsigned int smr_zone_t;
 
-
-long opt(vector<long>& hist, int bhuf_num);
+long opt_alloc(vector<long>& hist, int bhuf_num);
+long rand_alloc(vector<long>& hist, int bhuf_num);
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -82,17 +79,29 @@ int main(int argc, char** argv) {
     for (auto a: hist) {
 	if (a == 1)  
 	    cnt++;
-        else
-	    cout << a << " ";
+        // else
+	//     cout << a << " ";
     }
 
-    cout << "tail:" << cnt << "\n";
+    // cout << "tail:" << cnt << "\n";
     cout << "Zone Covered:" << cnt_map.size() << "\n";
+    string prefix = "opt_";
+    long clean_data_opt = opt_alloc(hist, 100);
+    printf("%stotal_data(GB) %10.3f\n", prefix.c_str(),
+	   total_data * 1.0 / GIG);
+    printf("%sclean_data(GB) %10.3f\n", prefix.c_str(),
+	   clean_data_opt * 1.0 / GIG);
+    printf("%sclean_overhead %10.3f\n", prefix.c_str(),
+	   clean_data_opt * 1.0 / total_data);
 
-    long clean_data = opt(hist, 100);
-    printf("    total data: %10.3f\n", total_data * 1.0 / GIG);
-    printf("    clean data: %10.3f\n", clean_data * 1.0 / GIG);
-    printf("clean overhead: %10.3f\n", clean_data * 1.0 / total_data);
+    long clean_data_rand = rand_alloc(hist, 100);
+    prefix = "rand_";
+    printf("%stotal_data(GB) %10.3f\n", prefix.c_str(),
+	   total_data * 1.0 / GIG);
+    printf("%sclean_data(GB) %10.3f\n", prefix.c_str(),
+	   clean_data_rand * 1.0 / GIG);
+    printf("%sclean_overhead %10.3f\n", prefix.c_str(),
+	   clean_data_rand * 1.0 / total_data);
     
     return 0;
 }

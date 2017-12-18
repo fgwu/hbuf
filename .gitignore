@@ -1,6 +1,11 @@
 *~
 *.o
 *.csv
-tracefiles
+
+
 stat
 stat_zone
+
+tracefiles
+tracefile_ssd
+logfiles
