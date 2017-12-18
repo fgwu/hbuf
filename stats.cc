@@ -3,14 +3,37 @@
 
 using namespace std;
 
-Stats::Stats(){ num_zone_cleaned = 0; cout << "Stats:Stats\n";}
+Stats* Stats::stats = nullptr;
 
+Stats::Stats(){
+    num_zone_cleaned = 0;
+    bytes_written = 0;
+}
 
-Stats::~Stats(){ cout << "Stats:~Stats\n";}
+Stats::~Stats(){
+}
 
-
+Stats* Stats::getStats() {
+    if (stats == nullptr)
+	stats = new Stats();
+    return stats;
+}
 
 void Stats::countZoneClean(int num_zones){
     num_zone_cleaned += num_zones;
-    printf("stats: cleaned %d zones (accu %lu)\n", num_zones, num_zone_cleaned);
+    //    printf("stats: cleaned %d zones (accu %lu)\n", num_zones, num_zone_cleaned);
+}
+
+void Stats::countBytesWritten(size_t len){
+    bytes_written += len;
+}
+
+void Stats::report() {
+    printf("total_bytes(GB) %9.3f\n",
+	   bytes_written * 1.0/(1024 * 1024 * 1024));
+    printf("clean_bytes(GB) %9.3f\n",
+	   num_zone_cleaned * (ZONE_SIZE * 1.0/(1024 * 1024 * 1024)));
+    printf("clean overhead: %9.3f\n", num_zone_cleaned * ZONE_SIZE * 1.0 / bytes_written);
+       
+
 }

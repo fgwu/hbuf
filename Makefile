@@ -7,7 +7,7 @@ PROG = sim
 $(PROG): $(OBJ)
 	g++ -o $(PROG) $(OBJ)
 
-$(OBJ): global.h policy.h disk.h stats.h
+$(OBJ): global.h policy.h disk.h stats.h fakedisk.h
 
 .PHONY: clean
 clean:

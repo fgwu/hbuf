@@ -14,8 +14,7 @@ class HBuf {
 private:
     zone_t hbuf_num;
     zone_t uzone_num;
-    FakeDisk *disk;
-    Stats *stats;
+    Disk *disk;
     // bhuf id => data's home zone collection.
     vector<unordered_set<zone_t>> hbuf_map; 
     void cleanHBuf(zone_t buf);

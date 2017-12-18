@@ -9,16 +9,17 @@ using namespace std;
 struct ioreq {
     loff_t off; // in bytes
     size_t len;
-    ioreq(): off(0), len(0) {}
-    ioreq(loff_t s,  size_t l): off(s), len(l) {}
+    bool is_write;
+    
+    ioreq(): off(0), len(0), is_write(false) {}
+    ioreq(loff_t s,  size_t l, bool w): off(s), len(l), is_write(w) {}
 };
 
 /* This class is the disk interface.
  */
 class Disk {
 public:
-    //    Disk();
-    virtual ~Disk() = 0;
+    virtual ~Disk() {};
     virtual loff_t write(ioreq req) = 0;
     virtual size_t read(ioreq req) = 0;
     virtual bool resetWritePointer(zone_t zone) = 0;

@@ -8,12 +8,13 @@
 using namespace std;
 
 FakeDisk::FakeDisk() {
-    wp.resize(TOTAL_ZONE_NUM, 0);
+    total_zone_num = TOTAL_ZONE_NUM;
+    wp.resize(total_zone_num, 0);
     for (long i = 0; i < TOTAL_ZONE_NUM; i++) {
 	wp[i] = i * ZONE_SIZE;
 	//	cout << "wp[" << i << "]=" << wp[i] << "\n";
     }
-    cout << "FakeDisk::FakeDisk" << " " << total_zone_num << "\n";
+    //    cout << "FakeDisk::FakeDisk" << " " << total_zone_num << "\n";
 }
 
 

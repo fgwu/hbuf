@@ -9,7 +9,7 @@ using namespace std;
 /* This class is the simulated HM disk. Will later be replaced by the
  * real disk. 
  */
-class FakeDisk{
+class FakeDisk: public Disk{
 private:
     zone_t total_zone_num;
     vector<loff_t> wp;

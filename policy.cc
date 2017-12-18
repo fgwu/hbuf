@@ -2,6 +2,7 @@
 #include "policy.h"
 //#include "disk.h"
 
+Policy Policy::policy;
 
 Policy Policy::GetPolicy() {
     return policy;

@@ -50,5 +50,6 @@ void TraceReader::next(ioreq& req) {
     */
     req.off = stol(Offset);
     req.len = stol(Size);
+    req.is_write = Type == "Write";
 }
 	
