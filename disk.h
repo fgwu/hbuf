@@ -1,33 +1,28 @@
 #ifndef _DISK_HPP_
 #define _DISK_HPP_
 
+#include <cstdlib>
 #include <vector>
 
 using namespace std;
 
 struct ioreq {
     loff_t off; // in bytes
-    llen_t len;
+    size_t len;
     ioreq(): off(0), len(0) {}
-    ioreq(loff_t s,  llen_t l): off(s), len(l) {}
+    ioreq(loff_t s,  size_t l): off(s), len(l) {}
 };
 
-/* This class is the simulated disk. Will later be replaced by the
- * real disk. 
+/* This class is the disk interface.
  */
 class Disk {
-private:
-    zone_t total_zone_num;
-    zone_t hbuf_num;
-    vector<poff_t> wp;
-    vector<poff_t> hwp; /*hbuf write pointers */
 public:
-    Disk();
-    ~Disk();
-    poff_t write(ioreq);
-    poff_t writeToZone(ioreq req, zone_t zone);
-    poff_t writeToHBuf(ioreq req, zone_t zone);
+    //    Disk();
+    virtual ~Disk() = 0;
+    virtual loff_t write(ioreq req) = 0;
+    virtual size_t read(ioreq req) = 0;
+    virtual bool resetWritePointer(zone_t zone) = 0;
+    virtual loff_t getWritePointer(zone_t zone) = 0;
+    virtual zone_t getZoneTotalNum() = 0;
 };
-
-
 #endif

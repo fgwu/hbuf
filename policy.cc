@@ -1,6 +1,6 @@
 #include "global.h"
 #include "policy.h"
-#include "disk.h"
+//#include "disk.h"
 
 
 Policy Policy::GetPolicy() {

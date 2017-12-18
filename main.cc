@@ -3,18 +3,23 @@
 #include "disk.h"
 #include "stats.h"
 #include "tracereader.h"
+#include "hbuf.h"
+
 using namespace std;
 
-int main(){
-	Disk d;
-	Stats stats;
-	cout << "hello world\n";
-	TraceReader tr("proj_2_short.csv");
-	ioreq req;
-	while(tr.hasNext()) {
-		tr.next(req);
-		cout << req.off << " " << req.len << "\n";
-		d.write(req);
-	}
-	return 0;
+int main(int argc, char** argv){
+    if (argc != 2) {
+	cout << argv[0] << " tracefile\n";
+	return -1;
+    }
+    
+    HBuf hbufdisk;
+    TraceReader tr(argv[1]);
+    ioreq req;
+    while(tr.hasNext()) {
+	tr.next(req);
+	//	printf("\ntrace req.off=%lx len=%lx\n", req.off, req.len);
+	hbufdisk.write(req);
+    }
+    return 0;
 }

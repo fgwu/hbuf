@@ -1,16 +1,13 @@
 CXX = g++
-CXXFLAGS = -Wall -g -std=c++11
-OBJ = disk.o main.o \
-	stats.o tracereader.o policy.o
+CXXFLAGS = -Wall -g -std=c++11 -Wextra -pedantic
+OBJ =  main.o \
+	stats.o tracereader.o policy.o fakedisk.o hbuf.o
 PROG = sim
 
 $(PROG): $(OBJ)
 	g++ -o $(PROG) $(OBJ)
 
-$(OBJ): global.h policy.h
-
-tracereader.o: disk.h
-
+$(OBJ): global.h policy.h disk.h stats.h
 
 .PHONY: clean
 clean:
