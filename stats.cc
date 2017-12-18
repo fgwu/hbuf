@@ -29,11 +29,11 @@ void Stats::countBytesWritten(size_t len){
 }
 
 void Stats::report() {
-    printf("total_bytes(GB) %9.3f\n",
+    printf("total_bytes(GB) %12.3f\n",
 	   bytes_written * 1.0/(1024 * 1024 * 1024));
-    printf("clean_bytes(GB) %9.3f\n",
+    printf("clean_bytes(GB) %12.3f\n",
 	   num_zone_cleaned * (ZONE_SIZE * 1.0/(1024 * 1024 * 1024)));
-    printf("clean overhead: %9.3f\n", num_zone_cleaned * ZONE_SIZE * 1.0 / bytes_written);
+    printf("clean overhead: %12.3f\n", num_zone_cleaned * ZONE_SIZE * 1.0 / bytes_written);
        
 
 }

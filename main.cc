@@ -1,24 +1,53 @@
 #include <iostream>
+#include <cassert>
 #include "global.h"
 #include "disk.h"
 #include "stats.h"
 #include "tracereader.h"
 #include "hbuf.h"
+#include "policy.h"
 #include "policy_setasso.h"
 #include "policy_rand.h"
 #include "policy_hash.h"
 
 using namespace std;
 
+unordered_map<string, policy_t> policy_to_enum = {
+    {"setasso", SETASSO}, {"rand", RAND}, {"hash", HASH}};
+
 int main(int argc, char** argv){
-    if (argc != 2) {
-	cout << argv[0] << " tracefile\n";
+    if (argc < 2) {
+	cout << argv[0] << " tracefile [policy]\n";
+	cout << "supported policies: setasso(default) rand hash\n";
 	return -1;
     }
-    
-    //Policy * p = new Policy_SetAsso();
-    Policy * p = new Policy_Hash();
-    //Policy * p = new Policy_Rand();
+
+    string policy_name;
+    if (argc == 2)
+	policy_name = "setasso";
+    else
+	policy_name = argv[2];
+
+    if (!policy_to_enum.count(policy_name)) {
+	cout << "supported policies: setasso(default) rand hash\n";
+	return -1;
+    }
+
+    Policy * p;
+    switch(policy_to_enum[policy_name]) {
+    case SETASSO:
+	p = new Policy_SetAsso();
+	break;
+    case RAND:
+	p = new Policy_Rand();
+	break;
+    case HASH:
+	p = new Policy_Hash();
+	break;
+    default:
+	assert(0);
+    }
+
     HBuf hbufdisk(p);
     TraceReader tr(argv[1]);
     ioreq req;
