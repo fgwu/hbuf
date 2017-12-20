@@ -25,10 +25,20 @@ HBuf::~HBuf () {
 
 void HBuf::cleanHBuf(zone_t buf) {
     assert(buf < hbuf_num);
-    printf("\ncleaning hbuf %u wp(%lx) size(%lu):", buf,
+    printf("\ncleaning hbuf %u wp(%lx) containing %lu zones:", buf,
     	   disk->getWritePointer(buf), hbuf_map[buf].size());
-    for (auto p: hbuf_map[buf])
-    	printf("[%u=>%.2fMB] ", p.first, p.second * 1.0 / (1024 * 1024));
+    for (auto p: hbuf_map[buf]) {
+	zone_t z = p.first;
+	size_t data_size = p.second;
+    	printf("[%u=>%.2fMB](", z, data_size * 1.0 / (1024 * 1024));
+	for (zone_t nbr_buf: zone_hbuf_map[z]) {
+	    if (nbr_buf == buf) continue; // skip the current hbuf.
+	    printf("hbuf%u %u->%.2fMB, ", nbr_buf, z,
+		   hbuf_map[nbr_buf][z] * 1.0 / (1024 * 1024));
+	    hbuf_map[nbr_buf].erase(z);
+	}
+	printf(")");
+    }
     printf("\n");
     Stats::getStats()->countZoneClean(hbuf_map[buf].size());
     hbuf_map[buf].clear();
@@ -44,6 +54,8 @@ loff_t HBuf::writeToHBuf(ioreq req, zone_t buf){
 	cleanHBuf(buf);
     zone_t zone = req.off / ZONE_SIZE;
     hbuf_map[buf][zone] += req.len;
+    zone_hbuf_map[zone].insert(buf);
+
     req.off = disk->getWritePointer(buf);
     disk->write(req);
     return req.off;
@@ -51,7 +63,7 @@ loff_t HBuf::writeToHBuf(ioreq req, zone_t buf){
 
 // return value: the resultant logic offset. 
 void HBuf::write(ioreq req){
-    writeToHBuf(req, policy->PickHBuf(req));
+    writeToHBuf(req, policy->PickHBuf(this, req));
     Stats::getStats()->countBytesWritten(req.len);
     // TODO insert poff mapping
     //    loff_t poff = writeToHBuf(req, p.PickHBuf(req));
@@ -61,6 +73,6 @@ void HBuf::write(ioreq req){
 void HBuf::read(ioreq req) {
     // TODO now ignore read request.
     //    printf("read req off=%lx, len=%lx\n", req.off, req.len);
-    (void)req; // supressing unused req warning.
+    UNUSED(req); // supressing unused req warning.
     return;
 }

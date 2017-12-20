@@ -6,7 +6,7 @@
 
 class Policy_SetAsso : public Policy{
  public:
-    zone_t PickHBuf(ioreq);
+    zone_t PickHBuf(HBuf*, ioreq);
 };
 
 #endif

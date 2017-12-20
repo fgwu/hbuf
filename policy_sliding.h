@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "disk.h"
 #include "policy.h"
+#include "hbuf.h"
 class Policy_Sliding : public Policy{
  private:
     vector<pair<long, zone_t>>hist; // cnt and zone
@@ -19,7 +20,7 @@ class Policy_Sliding : public Policy{
  public:
     Policy_Sliding(size_t);
     ~Policy_Sliding();
-    zone_t PickHBuf(ioreq);
+    zone_t PickHBuf(HBuf*, ioreq);
 };
 
 #endif

@@ -15,13 +15,15 @@ class HBuf {
 private:
     zone_t hbuf_num;
     zone_t uzone_num;
-    Disk *disk;
     Policy *policy;
     // bhuf id => data's home zone collection => data size.
-    vector<unordered_map<zone_t, size_t>> hbuf_map; 
+    vector<unordered_map<zone_t, size_t>> hbuf_map;
+    // reverse map: zone=>hbuffers that has its data
+    unordered_map<zone_t, unordered_set<zone_t>> zone_hbuf_map;
     void cleanHBuf(zone_t buf);
     loff_t writeToHBuf(ioreq req, zone_t zone);
  public:
+    Disk *disk;
     HBuf(Policy* p);
     ~HBuf();
     void write(ioreq req);

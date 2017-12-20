@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "global.h"
 #include "policy_sliding.h"
-
+#include "hbuf.h"
 
 Policy_Sliding::Policy_Sliding(size_t ws) {
     window_size = ws;
@@ -80,23 +80,24 @@ void Policy_Sliding::recordReq(ioreq req){
 
     // calculate zone_hbuf_map again.
     optAlloc();
-    printf("zone_map size=%d\n", zone_hbuf_map.size());
+    printf("zone_map size=%lu\n", zone_hbuf_map.size());
     
     zone_inject_size.clear();
     accu_size = 0;
 }
 
-zone_t Policy_Sliding::PickHBuf(ioreq req) {
+zone_t Policy_Sliding::PickHBuf(HBuf* hbuf, ioreq req) {
+    UNUSED(hbuf);
     zone_t zone = req.off / ZONE_SIZE;
     // does not appear in previous window
     // fall back to set associative
     // if(zone_hbuf_map.count(zone))
     // 	printf("zone %5u -> hbuf %5u\n", zone, zone_hbuf_map[zone]);
-    zone_t hbuf = zone_hbuf_map.count(zone) ?
+    zone_t h = zone_hbuf_map.count(zone) ?
 	zone_hbuf_map[zone] : zone % HBUF_NUM;
 
     // keep a record for next window
     recordReq(req);
     
-    return hbuf;
+    return h;
 }

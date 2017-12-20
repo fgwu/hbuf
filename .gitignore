@@ -9,4 +9,6 @@ sim
 
 tracefiles
 tracefile_ssd
-logfiles
+logfiles*
+stat.log
+hist.eps
