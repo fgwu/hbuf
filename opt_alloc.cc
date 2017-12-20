@@ -61,7 +61,7 @@ long opt_alloc(vector<long>& hist, int hbuf_num) {
 
     // long i = min((long)hbuf_num, n) - 1, j = n - 1;
     // for (; i >= 0; j = cut[i][j] - 1, i--) 
-    // 	printf("i=%ld [%ld %ld] cost=%ld\n", i, cut[i][j], j,
+    // 	printf("i=%ldprintf("i=%ld [%ld %ld] cost=%ld\n", i, cut[i][j], j,
     // 	       dp[cut[i][j]][j]);
 
     // if n < hbuf_num, we can store one zone per buffer. Just sum them up

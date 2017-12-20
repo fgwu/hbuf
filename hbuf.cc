@@ -27,8 +27,8 @@ void HBuf::cleanHBuf(zone_t buf) {
     assert(buf < hbuf_num);
     printf("\ncleaning hbuf %u wp(%lx) size(%lu):", buf,
     	   disk->getWritePointer(buf), hbuf_map[buf].size());
-    for (zone_t z: hbuf_map[buf])
-    	printf("%u ", z);
+    for (auto p: hbuf_map[buf])
+    	printf("[%u=>%.2fMB] ", p.first, p.second * 1.0 / (1024 * 1024));
     printf("\n");
     Stats::getStats()->countZoneClean(hbuf_map[buf].size());
     hbuf_map[buf].clear();
@@ -42,8 +42,8 @@ loff_t HBuf::writeToHBuf(ioreq req, zone_t buf){
     assert(buf < hbuf_num);
     if (disk->getWritePointer(buf) + req.len >= (buf + 1) * ZONE_SIZE)
 	cleanHBuf(buf);
-    
-    hbuf_map[buf].insert(req.off / ZONE_SIZE);
+    zone_t zone = req.off / ZONE_SIZE;
+    hbuf_map[buf][zone] += req.len;
     req.off = disk->getWritePointer(buf);
     disk->write(req);
     return req.off;

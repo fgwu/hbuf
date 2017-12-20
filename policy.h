@@ -7,7 +7,9 @@
 enum policy_t {
     SETASSO,
     RAND,
-    HASH}; 
+    HASH,
+    SLIDING
+}; 
 
 class Policy {
  public:

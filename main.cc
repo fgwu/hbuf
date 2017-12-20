@@ -9,11 +9,13 @@
 #include "policy_setasso.h"
 #include "policy_rand.h"
 #include "policy_hash.h"
+#include "policy_sliding.h"
 
 using namespace std;
 
 unordered_map<string, policy_t> policy_to_enum = {
-    {"setasso", SETASSO}, {"rand", RAND}, {"hash", HASH}};
+    {"setasso", SETASSO}, {"rand", RAND}, {"hash", HASH},
+    {"sliding", SLIDING}};
 
 int main(int argc, char** argv){
     if (argc < 2) {
@@ -43,6 +45,9 @@ int main(int argc, char** argv){
 	break;
     case HASH:
 	p = new Policy_Hash();
+	break;
+    case SLIDING:
+	p = new Policy_Sliding(ZONE_SIZE * 100); // actualy HBuf size
 	break;
     default:
 	assert(0);

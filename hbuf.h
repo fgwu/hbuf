@@ -17,8 +17,8 @@ private:
     zone_t uzone_num;
     Disk *disk;
     Policy *policy;
-    // bhuf id => data's home zone collection.
-    vector<unordered_set<zone_t>> hbuf_map; 
+    // bhuf id => data's home zone collection => data size.
+    vector<unordered_map<zone_t, size_t>> hbuf_map; 
     void cleanHBuf(zone_t buf);
     loff_t writeToHBuf(ioreq req, zone_t zone);
  public:
