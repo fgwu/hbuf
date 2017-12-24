@@ -11,10 +11,12 @@
 #include "policy_hash.h"
 #include "policy_sliding.h"
 #include "policy_singlelog.h"
+#include "policy_media.h"
 
 using namespace std;
 
 unordered_map<string, policy_t> policy_to_enum = {
+    {"media", MEDIA},
     {"setasso", SETASSO}, {"rand", RAND}, {"hash", HASH},
     {"sliding", SLIDING}, {"singlelog", SINGLELOG}};
 
@@ -27,9 +29,13 @@ int main(int argc, char** argv){
 
     string policy_name;
     if (argc == 2)
-	policy_name = "setasso";
+	policy_name = "media";
     else
 	policy_name = argv[2];
+
+    int sliding_size = 100; // in ZONE_SIZE
+    if (argc >= 4)
+	sliding_size = stoi(argv[3]);
 
     if (!policy_to_enum.count(policy_name)) {
 	cout << "supported policies: setasso(default) rand hash\n";
@@ -38,6 +44,9 @@ int main(int argc, char** argv){
 
     Policy * p;
     switch(policy_to_enum[policy_name]) {
+    case MEDIA:
+	p = new Policy_Media();
+	break;
     case SETASSO:
 	p = new Policy_SetAsso();
 	break;
@@ -48,7 +57,7 @@ int main(int argc, char** argv){
 	p = new Policy_Hash();
 	break;
     case SLIDING:
-	p = new Policy_Sliding(ZONE_SIZE * 100); // actualy HBuf size
+	p = new Policy_Sliding(ZONE_SIZE * sliding_size); // actualy HBuf size
 	break;
     case SINGLELOG:
 	p = new Policy_Singlelog();

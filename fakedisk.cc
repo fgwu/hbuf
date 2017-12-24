@@ -23,10 +23,14 @@ FakeDisk::~FakeDisk() {
 
 
 // return value: the resultant logic offset. -1 indicates fail.
+// for both seq and non-seq write, return the old wp.
+// TODO maintain the content map.
 loff_t FakeDisk::write(ioreq req){
-    // HM SMR reject any non-seq write.
     zone_t zone = req.off / ZONE_SIZE;
-    if (req.off != wp[zone]) assert(0);
+    if (req.off != wp[zone]) {
+	mc.write(req);
+	return wp[zone];
+    }
 
     // zone overflow.
     if (wp[zone] + req.len >= (zone + 1) * ZONE_SIZE ) assert(0);

@@ -63,8 +63,15 @@ loff_t HBuf::writeToHBuf(ioreq req, zone_t buf){
 
 // return value: the resultant logic offset. 
 void HBuf::write(ioreq req){
-    writeToHBuf(req, policy->PickHBuf(this, req));
     Stats::getStats()->countBytesWritten(req.len);
+    zone_t buf = policy->PickHBuf(this, req);
+    // fall back to media cache
+    if (buf == -1) {
+	disk->write(req);
+	return;
+    }
+    
+    writeToHBuf(req, buf);
     // TODO insert poff mapping
     //    loff_t poff = writeToHBuf(req, p.PickHBuf(req));
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "disk.h"
+#include "media_cache.h"
 
 using namespace std;
 
@@ -13,6 +14,7 @@ class FakeDisk: public Disk{
 private:
     zone_t total_zone_num;
     vector<loff_t> wp;
+    Media_Cache mc;
 public:
     FakeDisk();
     ~FakeDisk();

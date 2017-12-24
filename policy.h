@@ -7,11 +7,12 @@
 class HBuf;
 
 enum policy_t {
-    SETASSO,
-    RAND,
-    HASH,
-    SLIDING,
-    SINGLELOG
+    MEDIA,  // media cache
+    SETASSO, // set associative
+    RAND, // random
+    HASH, // hash
+    SLIDING, // sliding window
+    SINGLELOG // single log
 }; 
 
 class Policy {
