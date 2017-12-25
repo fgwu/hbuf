@@ -2,6 +2,8 @@
 *.o
 *.csv
 *.txt
+*.log
+*.eps
 
 stat
 stat_zone
@@ -10,5 +12,3 @@ sim
 tracefiles
 tracefile_ssd
 logfiles*
-stat.log
-hist.eps
