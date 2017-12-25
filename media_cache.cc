@@ -46,9 +46,17 @@ void Media_Cache::clean() {
 	// printf("media cache skipping: %5d (%7lld <  %7lld)\n",
 	//        me.zone, me.serial_no, valid_sn[me.zone]);
 	return;
-    }  else
-       	printf("media cache cleaning: %5d (%7lld >= %7lld)\n",
-      	       me.zone, me.serial_no, valid_sn[me.zone]);
+    }  else {
+	//       	printf("media cache cleaning: %5d (%7lld >= %7lld)\n",
+	//      	       me.zone, me.serial_no, valid_sn[me.zone]);
+    }
     Stats::getStats()->countZoneClean(1); // one more zone is cleaned
     valid_sn[me.zone] = serial_no;
+}
+
+void Media_Cache::cleanup() {
+    printf("media cache cleaning %lu entries ...", mq.size());
+    while(mq.size()) 
+	clean();
+    printf(" done\n");
 }

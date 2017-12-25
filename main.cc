@@ -81,6 +81,8 @@ int main(int argc, char** argv){
 	else
 	    hbufdisk.read(req);
     }
+
+    hbufdisk.cleanup(); // clean any remaining data in media cache or hbuf.
     Stats::getStats()->report();
     delete p;
     return 0;

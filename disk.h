@@ -25,5 +25,6 @@ public:
     virtual bool resetWritePointer(zone_t zone) = 0;
     virtual loff_t getWritePointer(zone_t zone) = 0;
     virtual zone_t getZoneTotalNum() = 0;
+    virtual void cleanup() = 0; // cleanup media cache
 };
 #endif

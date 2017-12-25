@@ -83,3 +83,7 @@ void HBuf::read(ioreq req) {
     UNUSED(req); // supressing unused req warning.
     return;
 }
+
+void HBuf::cleanup() {
+    disk->cleanup(); // media cache cleanup
+}

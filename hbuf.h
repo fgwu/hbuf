@@ -28,6 +28,7 @@ private:
     ~HBuf();
     void write(ioreq req);
     void read(ioreq req);
+    void cleanup();
 };
 
 

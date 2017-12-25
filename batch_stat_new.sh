@@ -6,7 +6,7 @@ logdir=./logfiles_all
 for f in $(ls tracefile_ssd/*csv); do
     trace=$(echo $f | grep -Eo [[:alnum:]]+_[0-9])
     echo -n $trace " " | tee -a stat.log
-    for p in setasso rand sliding singlelog; do
+    for p in setasso rand sliding singlelog media; do
 	#	echo -n trace $trace policy $p
 	:> ${logdir}/${trace}_${p}.log
 	./sim $f $p > ${logdir}/${trace}_${p}.log

@@ -1,7 +1,7 @@
 *~
 *.o
 *.csv
-
+*.txt
 
 stat
 stat_zone

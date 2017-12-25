@@ -59,3 +59,7 @@ loff_t FakeDisk::getWritePointer(zone_t zone) {
 zone_t FakeDisk::getZoneTotalNum() {
     return TOTAL_ZONE_NUM;
 }
+
+void FakeDisk::cleanup() {
+     mc.cleanup();
+}

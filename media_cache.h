@@ -27,6 +27,7 @@ class Media_Cache {
     Media_Cache();
     ~Media_Cache();
     loff_t write(ioreq req);
+    void cleanup(); // clean all entries
 };
 
 #endif

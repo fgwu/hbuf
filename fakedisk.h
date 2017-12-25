@@ -23,6 +23,7 @@ public:
     bool resetWritePointer(zone_t zone);
     loff_t getWritePointer(zone_t zone);
     zone_t getZoneTotalNum();
+    void cleanup();
 };
 
 
