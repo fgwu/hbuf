@@ -22,6 +22,7 @@ private:
     unordered_map<zone_t, unordered_set<zone_t>> zone_hbuf_map;
     void cleanHBuf(zone_t buf);
     loff_t writeToHBuf(ioreq req, zone_t zone);
+    void hbufcleanup(); // clean up all zones remaining in hbuf
  public:
     Disk *disk;
     HBuf(Policy* p);
