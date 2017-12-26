@@ -21,7 +21,9 @@ private:
     // reverse map: zone=>hbuffers that has its data
     unordered_map<zone_t, unordered_set<zone_t>> zone_hbuf_map;
     void cleanHBuf(zone_t buf);
-    loff_t writeToHBuf(ioreq req, zone_t zone);
+    void writeToHBuf(ioreq req, zone_t zone);
+    bool checkHomeZoneSeq(ioreq req);
+    void writeToHomeZone(ioreq req);
     void hbufcleanup(); // clean up all zones remaining in hbuf
  public:
     Disk *disk;

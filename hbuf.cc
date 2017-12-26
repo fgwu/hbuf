@@ -38,17 +38,17 @@ void HBuf::cleanHBuf(zone_t buf) {
 	zone_t z = p.first;
 	size_t data_size = p.second;
 	Stats::getStats()->countHBuf(z, data_size);
-    	// printf("[%u=>%.2fMB](", z, data_size * 1.0 / (1024 * 1024));
+    	// if (!z) printf("[%u=>%.2fMB](", z, data_size * 1.0 / (1024 * 1024));
 	for (zone_t nbr_buf: zone_hbuf_map[z]) {
 	    if (nbr_buf == buf) continue; // skip the current hbuf.
-	    // printf("hbuf%u %u->%.2fMB, ", nbr_buf, z,
+	    // if (!z) printf("hbuf%u %u->%.2fMB, ", nbr_buf, z,
 	    // 	   hbuf_map[nbr_buf][z] * 1.0 / (1024 * 1024));
-	    hbuf_map[nbr_buf].erase(z);
 	    Stats::getStats()->countHBuf(z, hbuf_map[nbr_buf][z]);
+	    hbuf_map[nbr_buf].erase(z);
 	}
 	// printf(")");
     }
-    // printf("\n");
+    //    printf("\n");
     Stats::getStats()->countZoneClean(hbuf_map[buf].size());
     hbuf_map[buf].clear();
     disk->resetWritePointer(buf);
@@ -56,8 +56,7 @@ void HBuf::cleanHBuf(zone_t buf) {
     // 	   disk->getWritePointer(buf), hbuf_map[buf].size());
 }
 
-// return value: the resultant logic offset. -1 indicates fail.
-loff_t HBuf::writeToHBuf(ioreq req, zone_t buf){
+void HBuf::writeToHBuf(ioreq req, zone_t buf){
     assert(buf < hbuf_num);
     if (disk->getWritePointer(buf) + req.len >= (buf + 1) * ZONE_SIZE)
 	cleanHBuf(buf);
@@ -67,18 +66,32 @@ loff_t HBuf::writeToHBuf(ioreq req, zone_t buf){
 
     req.off = disk->getWritePointer(buf);
     disk->write(req);
-    return req.off;
+}
+
+bool HBuf::checkHomeZoneSeq(ioreq req) {
+    loff_t wp = disk->getWritePointer(UZONE2RAW(req.off / ZONE_SIZE));
+    loff_t off = req.off + HBUF_NUM * ZONE_SIZE;
+    return wp == off;
+}
+
+void HBuf::writeToHomeZone(ioreq req) {
+    req.off += HBUF_NUM * ZONE_SIZE;
+    disk->write(req);
 }
 
 // return value: the resultant logic offset. 
 void HBuf::write(ioreq req){
+    if (checkHomeZoneSeq(req)) {
+	writeToHomeZone(req);
+	return;
+    }
     Stats::getStats()->countBytesWritten(req.len);
     zone_t z = req.off / ZONE_SIZE;
     Stats::getStats()->countOriginal(z, req.len);
     zone_t buf = policy->PickHBuf(this, req);
     // fall back to media cache
     if (buf == -1) {
-	disk->write(req);
+	writeToHomeZone(req);
 	return;
     }
     

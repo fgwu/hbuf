@@ -45,10 +45,11 @@ bool Stats::checkSize() {
     for (auto p: original_inflow) {
 	zone_t z = p.first;
 	size_t s = p.second;
-	if (s != hbuf_inflow[z] + media_inflow[z]) {
+	size_t s_hbuf = hbuf_inflow.count(z) ? hbuf_inflow[z] : 0;
+	size_t s_media = media_inflow.count(z) ? media_inflow[z] : 0;
+	if (s !=  s_hbuf + s_media) {
 	    printf("zone %d mismatch: %lu != %lu + %lu\n",
-		   z, s, hbuf_inflow[z], media_inflow[z]);
-	    printf("checkInflowSize missed.\n");
+		   z, s, s_hbuf, s_media);
 	    flag = false;;
 	}
     }

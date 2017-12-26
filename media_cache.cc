@@ -32,7 +32,9 @@ void Media_Cache::clean() {
     media_cache_entry me = mq.front();
     mq.pop();
 
-    Stats::getStats()->countMedia(me.zone, me.end - me.start);
+    // here me.zone is the disk zone to which the data belongs.
+    // we transfer it back to the user zone_id by substracting the HBUF_NUM.
+    Stats::getStats()->countMedia(me.zone - HBUF_NUM, me.end - me.start);
 
     // if current entry is already invalidated.
     if (valid_sn.count(me.zone) && me.serial_no < valid_sn[me.zone]) {
