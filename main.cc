@@ -23,7 +23,7 @@ unordered_map<string, policy_t> policy_to_enum = {
 int main(int argc, char** argv){
     if (argc < 2) {
 	cout << argv[0] << " tracefile [policy]\n";
-	cout << "supported policies: setasso(default) rand hash\n";
+	cout << "supported policies: setasso rand hash sliding singlelog media\n";
 	return -1;
     }
 

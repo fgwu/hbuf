@@ -26,6 +26,5 @@ public:
     void cleanup();
 };
 
-
 #endif
 

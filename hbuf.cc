@@ -36,13 +36,15 @@ void HBuf::cleanHBuf(zone_t buf) {
     // 	   disk->getWritePointer(buf), hbuf_map[buf].size());
     for (auto p: hbuf_map[buf]) {
 	zone_t z = p.first;
-	// size_t data_size = p.second;
+	size_t data_size = p.second;
+	Stats::getStats()->countHBuf(z, data_size);
     	// printf("[%u=>%.2fMB](", z, data_size * 1.0 / (1024 * 1024));
 	for (zone_t nbr_buf: zone_hbuf_map[z]) {
 	    if (nbr_buf == buf) continue; // skip the current hbuf.
 	    // printf("hbuf%u %u->%.2fMB, ", nbr_buf, z,
 	    // 	   hbuf_map[nbr_buf][z] * 1.0 / (1024 * 1024));
 	    hbuf_map[nbr_buf].erase(z);
+	    Stats::getStats()->countHBuf(z, hbuf_map[nbr_buf][z]);
 	}
 	// printf(")");
     }
@@ -71,6 +73,8 @@ loff_t HBuf::writeToHBuf(ioreq req, zone_t buf){
 // return value: the resultant logic offset. 
 void HBuf::write(ioreq req){
     Stats::getStats()->countBytesWritten(req.len);
+    zone_t z = req.off / ZONE_SIZE;
+    Stats::getStats()->countOriginal(z, req.len);
     zone_t buf = policy->PickHBuf(this, req);
     // fall back to media cache
     if (buf == -1) {

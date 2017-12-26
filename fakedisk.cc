@@ -27,7 +27,9 @@ FakeDisk::~FakeDisk() {
 // TODO maintain the content map.
 loff_t FakeDisk::write(ioreq req){
     zone_t zone = req.off / ZONE_SIZE;
-    if (req.off != wp[zone]) {
+    // currently all write will be redirected to media cache for verification
+    //    if (req.off != wp[zone]) {
+    if (true) { 
 	mc.write(req);
 	return wp[zone];
     }
