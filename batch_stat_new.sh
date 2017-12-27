@@ -11,8 +11,8 @@ for f in $(ls tracefile_ssd/*csv); do
 	#	echo -n trace $trace policy $p
 	:> ${logdir}/${trace}_${p}.log
 	./sim $f $p > ${logdir}/${trace}_${p}.log
-	overhead=$(cat ${logdir}/${trace}_${p}.log | grep overhead | awk '{print $2}')
-	echo -n $overhead "," | tee -a $outfile
+	overhead=$(cat ${logdir}/${trace}_${p}.log | grep zone_overhead | awk '{print $2}')
+	echo -n $overhead " " | tee -a $outfile
     done
     echo | tee -a $outfile
 done
