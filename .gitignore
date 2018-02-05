@@ -9,6 +9,9 @@ stat
 stat_zone
 sim
 
+inj_r
 tracefiles
 tracefile_ssd
 logfiles*
+
+inj_rate_files

@@ -32,28 +32,28 @@ void HBuf::cleanHBuf(zone_t buf) {
 	disk->resetWritePointer(buf);
 	return;
     }
-    // printf("cleaning hbuf %u wp(%lx) containing %lu zones:", buf,
-    // 	   disk->getWritePointer(buf), hbuf_map[buf].size());
+    printf("cleaning hbuf %u wp(%lx) containing %lu zones:", buf,
+	   disk->getWritePointer(buf), hbuf_map[buf].size());
     for (auto p: hbuf_map[buf]) {
 	zone_t z = p.first;
 	size_t data_size = p.second;
 	Stats::getStats()->countHBuf(z, data_size);
-    	// if (!z) printf("[%u=>%.2fMB](", z, data_size * 1.0 / (1024 * 1024));
+	printf("[%u=>%.2fMB](", z, data_size * 1.0 / (1024 * 1024));
 	for (zone_t nbr_buf: zone_hbuf_map[z]) {
 	    if (nbr_buf == buf) continue; // skip the current hbuf.
-	    // if (!z) printf("hbuf%u %u->%.2fMB, ", nbr_buf, z,
-	    // 	   hbuf_map[nbr_buf][z] * 1.0 / (1024 * 1024));
+	    //	    printf("hbuf%u %u->%.2fMB, ", nbr_buf, z,
+	    //	   hbuf_map[nbr_buf][z] * 1.0 / (1024 * 1024));
 	    Stats::getStats()->countHBuf(z, hbuf_map[nbr_buf][z]);
 	    hbuf_map[nbr_buf].erase(z);
 	}
-	// printf(")");
+	printf(")");
     }
-    //    printf("\n");
+    printf("\n");
     Stats::getStats()->countZoneClean(hbuf_map[buf].size());
     hbuf_map[buf].clear();
     disk->resetWritePointer(buf);
     // printf("cleaned  hbuf %u wp(%lx) size(%lu)\n", buf,
-    // 	   disk->getWritePointer(buf), hbuf_map[buf].size());
+    //  	   disk->getWritePointer(buf), hbuf_map[buf].size());
 }
 
 void HBuf::writeToHBuf(ioreq req, zone_t buf){

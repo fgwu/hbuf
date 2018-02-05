@@ -2,6 +2,10 @@
 #define _TRACEREADER_HPP_
 
 #include <fstream>
+#include <string>
+#include "disk.h"
+
+using namespace std;
 
 class TraceReader {
     string tracefile;

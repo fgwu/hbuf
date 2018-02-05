@@ -11,14 +11,17 @@
 #include "policy_hash.h"
 #include "policy_sliding.h"
 #include "policy_singlelog.h"
+#include "policy_multilog.h"
 #include "policy_media.h"
+#include "policy_hwindow.h"
 
 using namespace std;
 
 unordered_map<string, policy_t> policy_to_enum = {
     {"media", MEDIA},
     {"setasso", SETASSO}, {"rand", RAND}, {"hash", HASH},
-    {"sliding", SLIDING}, {"singlelog", SINGLELOG}};
+    {"sliding", SLIDING}, {"singlelog", SINGLELOG}, {"multilog", MULTILOG},
+    {"hwindow", HWINDOW}};
 
 int main(int argc, char** argv){
     if (argc < 2) {
@@ -57,10 +60,16 @@ int main(int argc, char** argv){
 	p = new Policy_Hash();
 	break;
     case SLIDING:
-	p = new Policy_Sliding(ZONE_SIZE * sliding_size); // actualy HBuf size
+	p = new Policy_Sliding(ZONE_SIZE * sliding_size); // actually HBuf size
 	break;
     case SINGLELOG:
 	p = new Policy_Singlelog();
+	break;
+    case MULTILOG:
+	p = new Policy_Multilog(ZONE_SIZE * sliding_size);// actually HBuf size
+	break;
+    case HWINDOW:
+	p = new Policy_Hwindow();
 	break;
     default:
 	assert(0);

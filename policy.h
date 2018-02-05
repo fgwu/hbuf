@@ -12,7 +12,9 @@ enum policy_t {
     RAND, // random
     HASH, // hash
     SLIDING, // sliding window
-    SINGLELOG // single log
+    SINGLELOG, // single log
+    MULTILOG,
+    HWINDOW
 }; 
 
 class Policy {
