@@ -1,4 +1,4 @@
-#/usr/bin/python
+#!/usr/bin/python
 
 import random
 f = open("synth_trace.csv", 'w')
@@ -10,7 +10,7 @@ hot_start = 64 * 256 * 1024 * 1024
 cold_start = 65 * 256 * 1024 * 1024
 
 for x in range(0, N):
-    zone_off = random.randint(0, zone_blks - 1)
+    zone_off = random.randint(0, zone_blks - 1) * 4096
     r = random.randint(0, 2)
     if (x % (N/100) == 0 ):
         print x / (N / 100), r
