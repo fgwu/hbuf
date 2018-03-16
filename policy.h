@@ -14,7 +14,8 @@ enum policy_t {
     SLIDING, // sliding window
     SINGLELOG, // single log
     MULTILOG,
-    HWINDOW
+    HWINDOW,
+    FOLD
 }; 
 
 class Policy {

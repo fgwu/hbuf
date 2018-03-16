@@ -14,6 +14,7 @@
 #include "policy_multilog.h"
 #include "policy_media.h"
 #include "policy_hwindow.h"
+#include "policy_fold.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ unordered_map<string, policy_t> policy_to_enum = {
     {"media", MEDIA},
     {"setasso", SETASSO}, {"rand", RAND}, {"hash", HASH},
     {"sliding", SLIDING}, {"singlelog", SINGLELOG}, {"multilog", MULTILOG},
-    {"hwindow", HWINDOW}};
+    {"hwindow", HWINDOW}, {"fold", FOLD}};
 
 int main(int argc, char** argv){
     if (argc < 2) {
@@ -36,7 +37,7 @@ int main(int argc, char** argv){
     else
 	policy_name = argv[2];
 
-    int sliding_size = 100; // in ZONE_SIZE
+    int sliding_size = 32; // in ZONE_SIZE
     if (argc >= 4)
 	sliding_size = stoi(argv[3]);
 
@@ -70,6 +71,9 @@ int main(int argc, char** argv){
 	break;
     case HWINDOW:
 	p = new Policy_Hwindow();
+	break;
+    case FOLD:
+	p = new Policy_Fold();
 	break;
     default:
 	assert(0);

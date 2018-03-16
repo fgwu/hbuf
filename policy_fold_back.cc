@@ -1,20 +1,18 @@
 #include <climits>
 #include <algorithm>
-#include <algorithm>
-#include <cmath>
+#include <cassert>
 #include "global.h"
-#include "policy_multilog.h"
+#include "policy_fold.h"
 #include "hbuf.h"
 
-Policy_Multilog::Policy_Multilog(size_t ws) {
-    max_win_size = ws;
-    win_size = 1;
-    accu_size = 0;
+Policy_Fold::Policy_Fold() {
+    //    folded = false;
+    folded = true;
 }
 
-Policy_Multilog::~Policy_Multilog() {}
+Policy_Fold::~Policy_Fold() {}
 
-long Policy_Multilog::optAlloc() {
+long Policy_Fold::optAlloc() {
     if (!hist.size()) return 0;
     long n = hist.size(); 
     // cost[i,j] stores the bhuf cost if it contains
@@ -46,8 +44,7 @@ long Policy_Multilog::optAlloc() {
 	    }
 
 	    dp[i][j] = cost[0][n - 1]; // max cost
-	    // if hist[j] is grouping with k, k + 1, ..., j - 1
-	    // to fit in one h-zone
+	    // if fitting hist k, k + 1, ..., j into one hbuf
 	    for (long k = 1; k <= j; k++) {
 		double cand = dp[i - 1][k - 1] + cost[k][j];
 		if (cand >= dp[i][j]) continue;
@@ -91,81 +88,91 @@ long Policy_Multilog::optAlloc() {
     return dp[(long)HBUF_NUM - 1][n - 1];
 }
 
-
-double Policy_Multilog::calcDiff(vector<pair<double, zone_t>> hist_old,
-				 vector<pair<double, zone_t>> hist_new){
-    double tmp = 0;
-    double base = 0;
-    for (auto p: hist_old) {
-	if (hist_new.count(p.second))
-	    tmp += (hist_new[p.second] - p.second) *
-		(hist_new[p.second] - p.second);
-	else
-	    tmp += p.second * p.second;
-    }
-
-    for (auto p: hist_new) {
-	if (!hist_old.count(p.second))
-	    tmp += p.second * p.second;
-	base += p.second * p.second;
-    }
-
-    return sqrt(tmp / base);
-}
-
-void Policy_Multilog::recordReq(ioreq req){
+void Policy_Fold::recordReq(ioreq req){
     zone_t zone = req.off / ZONE_SIZE;
     zone_inject_size[zone] += req.len;
-    accu_size += req.len;
+}
 
-    if (accu_size <= max_win_size) return;
-    printf("accu_size %ld reaches window size %ld\n", accu_size, win_size);
+void Policy_Fold::fold() {
     
-    // now accumulated data exceeds the window size, time to start new window
-    vector<pair<double, zone_t>> hist_new;
+}
+
+void Policy_Fold::calc() {
+    hist.clear();
+    zone_hbuf_map.clear();
 
     for (auto p: zone_inject_size)
-	hist_new.emplace_back(p.second, p.first); // reversed pair (size, zone)
+	hist.emplace_back(p.second, p.first); // reversed pair (size, zone)
 
-    double diff = calcDiff(hist, hist_new) < 0.2;
-    if (diff < 0.2)
-	win_size = min(max_win_size, win_size * 2);
-    else if (diff > 0.7)
-	win_size = max((size_t)1, win_size / 2);
-
-    printf("diff = %lf, win_size = %ld\n", diff, win_size);
-    
-
-    swap(hist, hist_new);
-    
     sort(hist.begin(), hist.end());
 
     // calculate zone_hbuf_map again.
-    zone_hbuf_map.clear();
     optAlloc();
     printf("zone_map size=%lu\n", zone_hbuf_map.size());
     
     zone_inject_size.clear();
-    accu_size = 0;
+
+    if (!folded) {
+	fold();
+	folded = true;
+    }
 }
 
-zone_t Policy_Multilog::PickHBuf(HBuf* hbuf, ioreq req) {
-    UNUSED(hbuf);
+zone_t Policy_Fold::PickHBuf(HBuf* hbuf, ioreq req) {
     zone_t zone = req.off / ZONE_SIZE;
 
-    recordReq(req);
+    // unfolded
+    // [            Module           ]
+    // 0                            H_BUF
+    //
+    // folded
+    // [   OPT group   | Module      ]
+    // 0           H_BUF/2          H_BUF
 
-    // does not appear in previous window
-    // fall back to set associative
-    if (!zone_hbuf_map.count(zone)) return zone % HBUF_NUM;
+    zone_t h;
+
+    // keep a record for next window
+    recordReq(req);
     
-    zone_t start = zone_hbuf_map[zone].first;
-    zone_t end = zone_hbuf_map[zone].second;
-    zone_t z;
-    for (z = start; z < end; z++) {
-	if (hbuf->disk->getWritePointer(z) + req.len < (z + 1) * ZONE_SIZE)
-	    break;
+    if (!folded)
+	h = zone % HBUF_NUM;
+    else if (!zone_hbuf_map.count(zone))
+	h = zone % (HBUF_NUM / 2) + HBUF_NUM / 2;
+    else if (zone_hbuf_map[zone].first >= HBUF_NUM / 2)
+	h = zone % (HBUF_NUM / 2) + HBUF_NUM / 2;
+    else {
+	zone_t start = zone_hbuf_map[zone].first;
+	zone_t end = zone_hbuf_map[zone].second;
+	for (h = start; h < end; h++) {
+	    if (hbuf->disk->getWritePointer(h) + req.len < (h + 1) * ZONE_SIZE)
+		break;
+	}
+    }
+
+    bool full = hbuf->disk->getWritePointer(h) + req.len >=
+	(h + 1) * ZONE_SIZE;
+    
+    if (!full) return h;
+
+    if (folded && (h < HBUF_NUM / 2 - 1)) return h;
+    // if the last OPT hbuf or any module group is full, recalc.
+    calc();
+
+    // the map has already changed. So map it again.
+    
+    // zone has already be counted by recordReq()
+    assert(zone_hbuf_map.count(zone));
+
+    if (zone_hbuf_map[zone].first >= HBUF_NUM / 2)
+	h = zone % (HBUF_NUM / 2) + HBUF_NUM / 2;
+    else {
+	zone_t start = zone_hbuf_map[zone].first;
+	zone_t end = zone_hbuf_map[zone].second;
+	for (h = start; h < end; h++) {
+	    if (hbuf->disk->getWritePointer(h) + req.len < (h + 1) * ZONE_SIZE)
+		break;
+	}
     }
     
-    return z;
+    return h;
 }
