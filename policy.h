@@ -15,7 +15,8 @@ enum policy_t {
     SINGLELOG, // single log
     MULTILOG,
     HWINDOW,
-    FOLD
+    FOLD,
+    SQRT
 }; 
 
 class Policy {

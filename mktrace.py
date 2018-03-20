@@ -11,7 +11,7 @@ cold_start = 65 * 256 * 1024 * 1024
 
 for x in range(0, N):
     zone_off = random.randint(0, zone_blks - 1) * 4096
-    r = random.randint(0, 2)
+    r = random.randint(0, 11)
     if (x % (N/100) == 0 ):
         print x / (N / 100), r
 #    print r

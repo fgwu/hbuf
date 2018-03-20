@@ -42,8 +42,8 @@ void Media_Cache::clean() {
 	//        me.zone, me.serial_no, valid_sn[me.zone]);
 	return;
     }  else {
-	//       	printf("media cache cleaning: %5d (%7lld >= %7lld)\n",
-	//      	       me.zone, me.serial_no, valid_sn[me.zone]);
+	printf("media cache cleaning: %5d (%7lld >= %7lld)\n",
+	       me.zone, me.serial_no, valid_sn[me.zone]);
     }
     Stats::getStats()->countZoneClean(1); // one more zone is cleaned
     valid_sn[me.zone] = serial_no;

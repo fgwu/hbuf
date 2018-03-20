@@ -57,6 +57,10 @@ long Policy_Sliding::optAlloc() {
 	    // printf("zone %u mapped to hbuf %ld\n", hist[k].second, i);
 	}
     }
+
+    for (auto p: zone_hbuf_map) {
+	printf("zone_hbuf_map: %d => %d\n", p.first, p.second);
+    }
     
     return dp[min(n, (long)HBUF_NUM) - 1][n - 1];
 }

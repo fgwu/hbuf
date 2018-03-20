@@ -63,11 +63,12 @@ void Stats::report() {
     else
         printf("checkInflowSize passed.\n");
 
-    printf("total_bytes(GB) %12.3f\n",
-	   bytes_written * 1.0/(1024 * 1024 * 1024));
-    printf("clean_bytes(GB) %12.3f\n",
-	   num_zone_cleaned * (ZONE_SIZE * 1.0/(1024 * 1024 * 1024)));
-    printf("data_overhead:  %12.3f\n", num_zone_cleaned * ZONE_SIZE * 1.0 / bytes_written);
-    printf("zone_overhead:  %12.3f\n", num_zone_cleaned * 1.0 / original_inflow.size());
+    // printf("total_bytes(GB) %12.3f\n",
+    // 	   bytes_written * 1.0/(1024 * 1024 * 1024));
+    // printf("clean_bytes(GB) %12.3f\n",
+    // 	   num_zone_cleaned * (ZONE_SIZE * 1.0/(1024 * 1024 * 1024)));
+    // printf("data_overhead:  %12.3f\n", num_zone_cleaned * ZONE_SIZE * 1.0 / bytes_written);
+    // printf("zone_overhead:  %12.3f\n", num_zone_cleaned * 1.0 / original_inflow.size());
+    printf("zone_cleaned %ld\n", num_zone_cleaned);
 
 }

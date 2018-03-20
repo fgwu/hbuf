@@ -15,6 +15,7 @@
 #include "policy_media.h"
 #include "policy_hwindow.h"
 #include "policy_fold.h"
+#include "policy_sqrt.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ unordered_map<string, policy_t> policy_to_enum = {
     {"media", MEDIA},
     {"setasso", SETASSO}, {"rand", RAND}, {"hash", HASH},
     {"sliding", SLIDING}, {"singlelog", SINGLELOG}, {"multilog", MULTILOG},
-    {"hwindow", HWINDOW}, {"fold", FOLD}};
+    {"hwindow", HWINDOW}, {"fold", FOLD}, {"sqrt", SQRT}};
 
 int main(int argc, char** argv){
     if (argc < 2) {
@@ -74,6 +75,8 @@ int main(int argc, char** argv){
 	break;
     case FOLD:
 	p = new Policy_Fold();
+    case SQRT:
+	p = new Policy_Sqrt();
 	break;
     default:
 	assert(0);

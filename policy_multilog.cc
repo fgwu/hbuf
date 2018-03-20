@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <algorithm>
 #include <cmath>
+#include <cassert>
 #include "global.h"
 #include "policy_multilog.h"
 #include "hbuf.h"
@@ -94,23 +95,25 @@ long Policy_Multilog::optAlloc() {
 
 double Policy_Multilog::calcDiff(vector<pair<double, zone_t>> hist_old,
 				 vector<pair<double, zone_t>> hist_new){
-    double tmp = 0;
-    double base = 0;
-    for (auto p: hist_old) {
-	if (hist_new.count(p.second))
-	    tmp += (hist_new[p.second] - p.second) *
-		(hist_new[p.second] - p.second);
-	else
-	    tmp += p.second * p.second;
-    }
+    // double tmp = 0;
+    // double base = 0;
+    // for (auto p: hist_old) {
+    // 	if (hist_new.count(p.second))
+    // 	    tmp += (hist_new[p.second] - p.second) *
+    // 		(hist_new[p.second] - p.second);
+    // 	else
+    // 	    tmp += p.second * p.second;
+    // }
 
-    for (auto p: hist_new) {
-	if (!hist_old.count(p.second))
-	    tmp += p.second * p.second;
-	base += p.second * p.second;
-    }
+    // for (auto p: hist_new) {
+    // 	if (!hist_old.count(p.second))
+    // 	    tmp += p.second * p.second;
+    // 	base += p.second * p.second;
+    // }
 
-    return sqrt(tmp / base);
+    // return sqrt(tmp / base);
+    assert(0);
+    return 0;
 }
 
 void Policy_Multilog::recordReq(ioreq req){
