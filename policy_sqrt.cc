@@ -10,25 +10,14 @@
 
 using namespace std;
 
-Policy_Sqrt::Policy_Sqrt() {
-    max_win_size = 1024L * 1024 * 256 * 100 * 2;
-    win_size = 1024L * 1024 * 4096;
-    accu_size = 0;
+Policy_Sqrt::Policy_Sqrt(): is_init(true), accu_size(0), cand(0) {
+    max_win_size = 1024L * 1024 * 256 * 100 * 1024;
+    win_size = 1024L * 1024 * 4096 * 1024;
 }
 
 Policy_Sqrt::~Policy_Sqrt() {}
 
-
-void Policy_Sqrt::recordReq(ioreq req){
-    zone_t zone = req.off / ZONE_SIZE;
-    if (!zone) assert(0);
-    zone_inject_size[zone] += req.len;
-    accu_size += req.len;
-
-    if (accu_size <= win_size) return;
-    printf("accu_size %ld reaches window size %ld\n", accu_size, win_size);
-    win_size = min(win_size * 2 , max_win_size);
-    
+void Policy_Sqrt::UpdateMapping () {
     zone_hbuf_map.clear();
     hbuf_cursor.clear();
     
@@ -73,11 +62,37 @@ void Policy_Sqrt::recordReq(ioreq req){
     accu_size = 0;
 }
 
+void Policy_Sqrt::recordReq(ioreq req){
+    zone_t zone = req.off / ZONE_SIZE;
+    if (!zone) assert(0);
+    zone_inject_size[zone] += req.len;
+    accu_size += req.len;
+
+    if (is_init) return;
+    if (accu_size <= win_size) return;
+    
+    printf("accu_size %ld reaches window size %ld\n", accu_size, win_size);
+    win_size = min(win_size * 2 , max_win_size);
+
+    UpdateMapping();
+}
+
 zone_t Policy_Sqrt::PickHBuf(HBuf* hbuf, ioreq req) {
     UNUSED(hbuf);
     zone_t zone = req.off / ZONE_SIZE;
 
     recordReq(req);
+    
+    if (is_init) {
+	if (cand < HBUF_NUM &&
+	hbuf->disk->getWritePointer(cand) + req.len <
+	(cand + 1) * ZONE_SIZE) {
+	    return cand;
+	}
+	is_init = false;
+	printf("init pass complete, Updating mapping\n");
+	UpdateMapping();
+    }
 
     // does not appear in previous window
     // fall back to set associative
@@ -89,7 +104,7 @@ zone_t Policy_Sqrt::PickHBuf(HBuf* hbuf, ioreq req) {
 
     // if current cursor points to an hbuf that is full, move to the next
     if (hbuf->disk->getWritePointer(h) + req.len >= (h + 1) * ZONE_SIZE) {
-	if (++h >= end)
+	if (++h > end)
 	    h = start;
 	hbuf_cursor[zone] = h;
 	cout << "mapping zone " << zone << " ==> " << h << "\n";

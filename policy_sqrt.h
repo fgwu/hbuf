@@ -11,11 +11,13 @@ class Policy_Sqrt : public Policy{
     unordered_map<zone_t, pair<zone_t, zone_t>> zone_hbuf_map;
     unordered_map<zone_t, zone_t> hbuf_cursor;
     unordered_map<zone_t, long> zone_inject_size;
+    bool is_init;
+    long accu_size;
+    zone_t cand;
     long max_win_size; // window size in terms of the incomeing traffic
     long win_size;
-    long accu_size;
 
-    long optAlloc();
+    void UpdateMapping();
     void recordReq(ioreq);
 
     

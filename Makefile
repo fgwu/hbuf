@@ -8,7 +8,7 @@ OBJ =  main.o \
 	policy_multilog.o policy_fold.o policy_sqrt.o
 
 PROG = sim
-ALL: $(PROG) analyze
+ALL: $(PROG) analyze estimate
 
 
 $(PROG): $(OBJ)
@@ -16,6 +16,9 @@ $(PROG): $(OBJ)
 
 analyze: trace_analyze.o tracereader.o
 	g++ trace_analyze.cc tracereader.cc -o analyze $(CXXFLAGS)
+
+estimate: trace_estimate.o tracereader.o
+	g++ trace_estimate.cc tracereader.cc -o estimate $(CXXFLAGS)
 
 $(OBJ): global.h policy.h disk.h stats.h fakedisk.h
 
