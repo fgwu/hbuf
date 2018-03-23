@@ -6,6 +6,8 @@
 #include "disk.h"
 #include "stats.h"
 
+//#define LIMITED_MEDIA_CACHE_MAPPING
+
 Media_Cache::Media_Cache() { serial_no = 0; }
 
 Media_Cache::~Media_Cache() {}
@@ -15,11 +17,18 @@ loff_t Media_Cache::write(ioreq req) {
     if (start + req.len > MEDIA_CACHE_SIZE) start = 0;
     loff_t end = start + req.len;
 
+
+    #ifdef LIMITED_MEDIA_CACHE_MAPPING
     // ensure that both the media cache capacity and the mapping are not
     // excceeded.
     while (mq.size() >= MEDIA_CACHE_MAPPING_SIZE ||
-	   (mq.size() && end > mq.front().start && start < mq.front().end)) 
+    	   (mq.size() && end > mq.front().start && start < mq.front().end)) 
+    	clean();
+
+    #else
+    while (mq.size() && end > mq.front().start && start < mq.front().end)
 	clean();
+    #endif
     
     zone_t zone = req.off / ZONE_SIZE;
     mq.push(media_cache_entry(++serial_no, zone, start, end));
