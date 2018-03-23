@@ -24,7 +24,7 @@ void Policy_Sqrt::UpdateMapping () {
     vector<pair<zone_t, double>> sqrt_vec;
     double total_sqrt = 0;
     for (auto p: zone_inject_size) {
-	if (!p.first) assert(0);
+	//	if (!p.first) assert(0);
 	cout << p.first << "," << p.second << "\n";
 	double sq_root = sqrt(p.second);
 	sqrt_vec.push_back(make_pair(p.first, sq_root));
@@ -37,10 +37,10 @@ void Policy_Sqrt::UpdateMapping () {
 	});
 
     double accu_sqrt = 0;
-    for (int i = 0; i < sqrt_vec.size(); i++){
+    for (unsigned int i = 0; i < sqrt_vec.size(); i++){
 	cout << "i=" << i << " " << sqrt_vec[i].first << ", " << sqrt_vec[i].second << "\n";
 	zone_t z = sqrt_vec[i].first;
-	if (!z) assert(0);
+	//	if (!z) assert(0);
 	cout << "zone: " << z;
 	zone_hbuf_map[z].first = HBUF_NUM * accu_sqrt / total_sqrt;
 	cout << " first=" << zone_hbuf_map[z].first
@@ -64,13 +64,12 @@ void Policy_Sqrt::UpdateMapping () {
 
 void Policy_Sqrt::recordReq(ioreq req){
     zone_t zone = req.off / ZONE_SIZE;
-    if (!zone) assert(0);
     zone_inject_size[zone] += req.len;
     accu_size += req.len;
 
     if (is_init) return;
     if (accu_size <= win_size) return;
-    
+        
     printf("accu_size %ld reaches window size %ld\n", accu_size, win_size);
     win_size = min(win_size * 2 , max_win_size);
 

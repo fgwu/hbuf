@@ -33,7 +33,17 @@ int main(int argc, char** argv){
     long sum = 0, sum_sqrt = 0;
     vector<double> vec, vec_sqrt;
     vector<zone_t> vec_zone_id;
-    for (auto p: m) {
+
+    vector<pair<zone_t, long>> map_vec;
+    for (auto p: m) 
+	map_vec.push_back(p);
+
+    sort(map_vec.begin(), map_vec.end(),
+	 [](const pair<zone_t, long> &a, const pair<zone_t, long> &b){
+	     return a.second < b.second;
+	});
+    
+    for (auto p: map_vec) {
 	cout << p.first << "," << p.second << "\n";
 	vec.push_back(p.second);
 	vec_sqrt.push_back(sqrt(p.second));
@@ -43,7 +53,7 @@ int main(int argc, char** argv){
     }
 
     long single_cost = 0, multi_cost = 0;
-    for (int i = 0; i < m.size(); i++) {
+    for (unsigned int i = 0; i < m.size(); i++) {
 	double s = HBUF_SIZE * vec[i] / sum;
 	single_cost += (int)(vec[i] / s) + 1;
 

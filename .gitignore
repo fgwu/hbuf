@@ -8,6 +8,7 @@
 stat
 stat_zone
 sim
+estimate
 
 inj_r
 tracefiles
