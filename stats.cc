@@ -19,6 +19,10 @@ Stats* Stats::getStats() {
     return stats;
 }
 
+void Stats::countPerZoneClean(zone_t z){
+    zone_clean_count[z]++;
+}
+
 void Stats::countZoneClean(int num_zones){
     num_zone_cleaned += num_zones;
     //    printf("stats: cleaned %d zones (accu %lu)\n", num_zones, num_zone_cleaned);
@@ -69,6 +73,8 @@ void Stats::report() {
     // 	   num_zone_cleaned * (ZONE_SIZE * 1.0/(1024 * 1024 * 1024)));
     // printf("data_overhead:  %12.3f\n", num_zone_cleaned * ZONE_SIZE * 1.0 / bytes_written);
     // printf("zone_overhead:  %12.3f\n", num_zone_cleaned * 1.0 / original_inflow.size());
-    printf("zone_cleaned %ld\n", num_zone_cleaned);
+    for (auto p: zone_clean_count)
+	printf("zone %d count=%ld\n", p.first, p.second);
 
+    printf("zone_cleaned %ld\n", num_zone_cleaned);
 }

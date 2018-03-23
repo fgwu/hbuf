@@ -38,6 +38,7 @@ void HBuf::cleanHBuf(zone_t buf) {
 	zone_t z = p.first;
 	size_t data_size = p.second;
 	Stats::getStats()->countHBuf(z, data_size);
+	Stats::getStats()->countPerZoneClean(z);
 	printf("[%u=>%.2fMB](", z, data_size * 1.0 / (1024 * 1024));
 	for (zone_t nbr_buf: zone_hbuf_map[z]) {
 	    if (nbr_buf == buf) continue; // skip the current hbuf.

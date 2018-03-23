@@ -16,6 +16,8 @@ class Stats {
     size_t bytes_written; // the orignial size written
     static Stats* stats;
 
+    unordered_map<zone_t, long> zone_clean_count;
+    
     // correctness verification
     unordered_map<zone_t, size_t> original_inflow;
     unordered_map<zone_t, size_t> hbuf_inflow;
@@ -25,6 +27,7 @@ class Stats {
     Stats();
     ~Stats();
     void countZoneClean(int num_zones);
+    void countPerZoneClean(zone_t z);
     void countBytesWritten(size_t len);
     void countOriginal(zone_t z, size_t s);
     void countHBuf(zone_t z, size_t s);
