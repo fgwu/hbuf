@@ -60,14 +60,19 @@ int main(int argc, char** argv){
 	double s_sqrt = HBUF_SIZE * vec_sqrt[i] / sum_sqrt;
 	multi_cost += (int)(vec[i] / s_sqrt) + 1;
 
-	cout << "zone:" << vec_zone_id[i]
-	     << " single=" << (int)(vec[i] / s) + 1
-	     << " multi=" << (int)(vec[i] / s_sqrt) + 1 << "\n";
+	// cout << "zone:" << vec_zone_id[i]
+	//      << " single=" << s / ZONE_SIZE << " " << (int)(vec[i] / s) + 1
+	//      << " multi=" << s_sqrt / ZONE_SIZE
+	//      << " " <<  (int)(vec[i] / s_sqrt) + 1 << "\n";
+
+	printf("zone %4d | media %4.1f %3d | sqrt %4.1f %3d\n",
+	       vec_zone_id[i], s / ZONE_SIZE, (int)(vec[i] / s) + 1,
+	       s_sqrt / ZONE_SIZE, (int)(vec[i] / s_sqrt) + 1);
     }
 
-    cout << "#zone " << m.size() << " "
-	 <<"single log cost = " << single_cost << "  "
-	 << "multi log cost = " << multi_cost;
+    printf("#zone %3lu |            %3ld |           %3ld",
+	   m.size(), single_cost, multi_cost);
+
     if (single_cost > multi_cost)
 	cout << "   win!!";
     else if (single_cost ==  multi_cost)
