@@ -1,0 +1,19 @@
+set terminal postscript eps color enhanced size 10,5 font "Times-Roman" 22
+set output 'TRACE.eps'
+set title "TRACE"
+
+set ylabel 'LBA Coverage (%)'
+set y2label 'Data Injected (MB)'
+set y2tics 
+set ytics nomirror
+
+set yrange [0:100]
+
+set style fill solid border -1
+set boxwidth 0.3
+set xtic rotate by -45 scale 0
+#set key outside
+#set logscale y
+#set logscale y2
+plot 'TRACE_sorted.csv' using ($3/65536*100):xtic(1) with boxes t 'lba coverage', \
+     '' using ($2/1048576):xtic(1) t 'data injected' ps 3 pt 7 axes x1y2
