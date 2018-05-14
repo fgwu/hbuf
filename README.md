@@ -5,3 +5,6 @@ Non-sequential Zone: LBA coverage and Injection Rate
 
 Accmulated Injected Data Amount for each zone
 - inj_rate.sh, inject_rate_files
+
+Print the inject rate per-zone every size window.
+- rate_analyze

@@ -9,10 +9,11 @@ stat
 stat_zone
 sim
 estimate
+rate_analyze
 
 inj_r
 tracefiles
 tracefile_ssd
 logfiles*
 
-inj_rate_files
+cscope*
