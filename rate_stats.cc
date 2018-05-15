@@ -30,7 +30,7 @@ bool RateStats::InUpdateSet(ioreq req) {
 
 bool RateStats::recordReq(ioreq req) {
 
-    if (!InUpdateSet(req)) return false;
+    // if (!InUpdateSet(req)) return false;
     
     zone_t zone = req.off / ZONE_SIZE;
     zone_inject_size[zone] += req.len;
