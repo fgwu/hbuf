@@ -8,7 +8,7 @@ OBJ =  main.o \
 	policy_multilog.o policy_fold.o policy_sqrt.o
 
 PROG = sim
-ALL: $(PROG) analyze estimate rate_analyze
+ALL: $(PROG) analyze estimate rate_analyze rate_analyze_group
 
 
 $(PROG): $(OBJ)
@@ -19,6 +19,10 @@ analyze: trace_analyze.o tracereader.o
 
 rate_analyze: rate_analyze.o tracereader.o rate_stats.o
 	g++ tracereader.cc rate_analyze.cc rate_stats.o -o rate_analyze $(CXXFLAGS)
+
+rate_analyze_group: rate_analyze_group.o tracereader.o rate_stats_group.o
+	g++ tracereader.cc rate_analyze_group.cc rate_stats_group.o \
+	-o rate_analyze_group $(CXXFLAGS)
 
 estimate: trace_estimate.o tracereader.o
 	g++ trace_estimate.cc tracereader.cc -o estimate $(CXXFLAGS)
@@ -33,4 +37,4 @@ policy_media.o: policy_media.h
 
 .PHONY: clean
 clean:
-	-rm $(PROG) $(OBJ) analyze rate_analyze
+	-rm $(PROG) $(OBJ) analyze rate_analyze rate_analyze_group

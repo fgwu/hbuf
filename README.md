@@ -8,3 +8,8 @@ Accmulated Injected Data Amount for each zone
 
 Print the inject rate per-zone every size window.
 - rate_analyze
+
+Print the inject rate per-group every size window.
+The group by defualt is separated by [1MB, 10MB, 100MB].
+- rate_analyze_group
+
