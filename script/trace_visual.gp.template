@@ -1,0 +1,10 @@
+set terminal postscript eps color enhanced size 10,5 font "Times-Roman" 22
+set output 'visual_TRACE.eps'
+set title "TRACE"
+set datafile separator ","
+set ylabel 'Offset (GB)'
+set xlabel 'Time (h)'
+#set xrange [0:*]
+#plot 'TRACE_w.csv' using ($5/1000000000) t 'WRITE'
+plot 'TRACE_w.csv' using ($1-128166355022061256.0)/36000000000.0:($5/1000000000) t 'WRITE'
+#'TRACE_r.csv' using ($1-128166355022061256.0)/36000000000.0:($5/1000000000) t 'READ'
